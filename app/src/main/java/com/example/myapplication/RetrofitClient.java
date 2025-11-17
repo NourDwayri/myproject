@@ -11,7 +11,7 @@ public class RetrofitClient {
         if (retrofit == null) {
             retrofit = new Retrofit.Builder()
                     // ✅ Use your actual MockAPI base URL ending with /
-                    .baseUrl("https://691ac0712d8d7855757001df.mockapi.io/api/")
+                    .baseUrl("http://127.0.0.1:8000/")
                     .addConverterFactory(GsonConverterFactory.create())
                     .build();
         }
