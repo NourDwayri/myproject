@@ -11,7 +11,7 @@ public class RetrofitClient {
         if (retrofit == null) {
             retrofit = new Retrofit.Builder()
                     // ✅ Use your actual MockAPI base URL ending with /
-                    .baseUrl("http://127.0.0.1:8000/")
+                    .baseUrl("https://myproject-three-flame.vercel.app/")
                     .addConverterFactory(GsonConverterFactory.create())
                     .build();
         }
