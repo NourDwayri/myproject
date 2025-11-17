@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:padding="16dp"
+    android:gravity="center_horizontal"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <ImageView
+        android:id="@+id/app_logo"
+        android:layout_width="393dp"
+        android:layout_height="215dp"
+        android:contentDescription="@string/starbuzz_logo"
+        android:src="@drawable/starbuzz_logo" />
+
+    <TextView
+        android:text="Ace your Exams"
+        android:textColor="#8B4513"
+    android:textStyle="italic"
+        android:textSize="20sp"
+        android:layout_marginTop="8dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+
+    <!-- Search row -->
+    <LinearLayout
+        android:layout_marginTop="16dp"
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <EditText
+            android:id="@+id/edit_search"
+            android:layout_weight="1"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:hint="Search avatar name (exact)" />
+
+        <Button
+            android:id="@+id/btn_go"
+            android:layout_marginLeft="8dp"
+            android:background="#8B4513"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Go" />
+    </LinearLayout>
+
+    <Button
+        android:id="@+id/btn_show_all"
+        android:layout_marginTop="20dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Avatars"
+        android:background="#8B4513"/>
+
+    <Button
+        android:id="@+id/btn_add_new"
+        android:layout_marginTop="12dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Add New Avatar"
+        android:background="#8B4513"/>
+
+</LinearLayout>
