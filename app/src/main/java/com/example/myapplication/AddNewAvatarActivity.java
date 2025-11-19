@@ -1,61 +1,64 @@
 package com.example.myapplication;
 
 import androidx.appcompat.app.AppCompatActivity;
-import android.widget.Button;
-
-import android.content.ContentValues;
-import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+
 public class AddNewAvatarActivity extends AppCompatActivity {
 
-    private EditText edit_name, edit_description, edit_image;
-    private Button btn_save;
-    private com.example.myapplication.StarbuzzDatabaseHelper dbHelper;
+    private EditText editName, editDescription, editImage;
+    private Button btnSave;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_new_avatar);
 
-        dbHelper = new com.example.myapplication.StarbuzzDatabaseHelper(this);
+        editName = findViewById(R.id.edit_name);
+        editDescription = findViewById(R.id.edit_description);
+        editImage = findViewById(R.id.edit_image); // Optional: URL
+        btnSave = findViewById(R.id.btn_save);
 
-        edit_name = findViewById(R.id.edit_name);
-        edit_description = findViewById(R.id.edit_description);
-        edit_image = findViewById(R.id.edit_image); // optional: drawable name or leave empty
-        btn_save = findViewById(R.id.btn_save);
-
-        btn_save.setOnClickListener(v -> {
-            String name = edit_name.getText().toString().trim();
-            String desc = edit_description.getText().toString().trim();
-            String img = edit_image.getText().toString().trim();
+        btnSave.setOnClickListener(v -> {
+            String name = editName.getText().toString().trim();
+            String desc = editDescription.getText().toString().trim();
+            String imgUrl = editImage.getText().toString().trim();
 
             if (name.isEmpty() || desc.isEmpty()) {
                 Toast.makeText(this, "Please enter name and description", Toast.LENGTH_SHORT).show();
                 return;
             }
 
-            int drawableId = R.drawable.placeholder; // default
-            // if user typed a drawable name and it exists, try to use it
-            if (!img.isEmpty()) {
-                int id = getResources().getIdentifier(img, "drawable", getPackageName());
-                if (id != 0) drawableId = id;
+            // Default placeholder if no URL provided
+            if (imgUrl.isEmpty()) {
+                imgUrl = "https://via.placeholder.com/150";
             }
 
-            SQLiteDatabase wdb = dbHelper.getWritableDatabase();
-            ContentValues cv = new ContentValues();
-            cv.put("NAME", name);
-            cv.put("DESCRIPTION", desc);
-            cv.put("IMAGE_RESOURCE_ID", drawableId);
-            long newId = wdb.insert("AVATAR", null, cv);
-            wdb.close();
+            AvatarDto newAvatar = new AvatarDto(name, desc, imgUrl);
 
-            Toast.makeText(this, "Saved (id=" + newId + ")", Toast.LENGTH_SHORT).show();
+            RetrofitClient.getAvatarApiService().addAvatar(newAvatar)
+                    .enqueue(new Callback<ApiResponse>() {
+                        @Override
+                        public void onResponse(Call<ApiResponse> call, Response<ApiResponse> response) {
+                            if(response.isSuccessful() && response.body() != null) {
+                                Toast.makeText(AddNewAvatarActivity.this, "Saved to server!", Toast.LENGTH_SHORT).show();
+                                finish(); // Close activity after save
+                            } else {
+                                Toast.makeText(AddNewAvatarActivity.this, "Failed to save", Toast.LENGTH_SHORT).show();
+                            }
+                        }
 
-            // After save: go to RecordsListActivity showing all
-            finish();
+                        @Override
+                        public void onFailure(Call<ApiResponse> call, Throwable t) {
+                            Toast.makeText(AddNewAvatarActivity.this, "Error: " + t.getMessage(), Toast.LENGTH_SHORT).show();
+                        }
+                    });
         });
     }
 }

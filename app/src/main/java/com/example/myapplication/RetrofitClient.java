@@ -10,8 +10,7 @@ public class RetrofitClient {
     public static AvatarApiService getAvatarApiService() {
         if (retrofit == null) {
             retrofit = new Retrofit.Builder()
-                    // ✅ Use your actual MockAPI base URL ending with /
-                    .baseUrl("http://127.0.0.1:8000/")
+                    .baseUrl("https://myproject-jxip9iiux-nour-dwayris-projects.vercel.app/") // ✅ deployed FastAPI
                     .addConverterFactory(GsonConverterFactory.create())
                     .build();
         }
