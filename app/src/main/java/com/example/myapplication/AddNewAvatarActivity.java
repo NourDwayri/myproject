@@ -12,50 +12,45 @@ import retrofit2.Response;
 
 public class AddNewAvatarActivity extends AppCompatActivity {
 
-    private EditText editName, editDescription, editImage;
-    private Button btnSave;
+    private EditText edit_name, edit_description, edit_image;
+    private Button btn_save;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_new_avatar);
 
-        editName = findViewById(R.id.edit_name);
-        editDescription = findViewById(R.id.edit_description);
-        editImage = findViewById(R.id.edit_image); // Optional: URL
-        btnSave = findViewById(R.id.btn_save);
+        edit_name = findViewById(R.id.edit_name);
+        edit_description = findViewById(R.id.edit_description);
+        edit_image = findViewById(R.id.edit_image);
+        btn_save = findViewById(R.id.btn_save);
 
-        btnSave.setOnClickListener(v -> {
-            String name = editName.getText().toString().trim();
-            String desc = editDescription.getText().toString().trim();
-            String imgUrl = editImage.getText().toString().trim();
+        btn_save.setOnClickListener(v -> {
+            String name = edit_name.getText().toString().trim();
+            String desc = edit_description.getText().toString().trim();
+            String imgUrl = edit_image.getText().toString().trim();
 
             if (name.isEmpty() || desc.isEmpty()) {
                 Toast.makeText(this, "Please enter name and description", Toast.LENGTH_SHORT).show();
                 return;
             }
 
-            // Default placeholder if no URL provided
-            if (imgUrl.isEmpty()) {
-                imgUrl = "https://via.placeholder.com/150";
-            }
-
             AvatarDto newAvatar = new AvatarDto(name, desc, imgUrl);
 
             RetrofitClient.getAvatarApiService().addAvatar(newAvatar)
-                    .enqueue(new Callback<ApiResponse>() {
+                    .enqueue(new Callback<ApiResponse<AvatarDto>>() {
                         @Override
-                        public void onResponse(Call<ApiResponse> call, Response<ApiResponse> response) {
-                            if(response.isSuccessful() && response.body() != null) {
-                                Toast.makeText(AddNewAvatarActivity.this, "Saved to server!", Toast.LENGTH_SHORT).show();
-                                finish(); // Close activity after save
+                        public void onResponse(Call<ApiResponse<AvatarDto>> call, Response<ApiResponse<AvatarDto>> response) {
+                            if (response.isSuccessful() && response.body() != null && response.body().isSuccess()) {
+                                Toast.makeText(AddNewAvatarActivity.this, "Avatar added!", Toast.LENGTH_SHORT).show();
+                                finish(); // close activity after success
                             } else {
-                                Toast.makeText(AddNewAvatarActivity.this, "Failed to save", Toast.LENGTH_SHORT).show();
+                                Toast.makeText(AddNewAvatarActivity.this, "Failed: " + (response.body() != null ? response.body().getMessage() : response.code()), Toast.LENGTH_SHORT).show();
                             }
                         }
 
                         @Override
-                        public void onFailure(Call<ApiResponse> call, Throwable t) {
+                        public void onFailure(Call<ApiResponse<AvatarDto>> call, Throwable t) {
                             Toast.makeText(AddNewAvatarActivity.this, "Error: " + t.getMessage(), Toast.LENGTH_SHORT).show();
                         }
                     });

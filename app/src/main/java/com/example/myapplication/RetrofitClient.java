@@ -10,7 +10,7 @@ public class RetrofitClient {
     public static AvatarApiService getAvatarApiService() {
         if (retrofit == null) {
             retrofit = new Retrofit.Builder()
-                    .baseUrl("https://myproject-jxip9iiux-nour-dwayris-projects.vercel.app/") // ✅ deployed FastAPI
+                    .baseUrl("http://10.0.2.2:8000/")
                     .addConverterFactory(GsonConverterFactory.create())
                     .build();
         }

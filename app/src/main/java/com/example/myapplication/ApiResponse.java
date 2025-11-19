@@ -1,9 +1,11 @@
 package com.example.myapplication;
 
-public class ApiResponse {
-    private String status;
+public class ApiResponse<T> {
+    private boolean success;
     private String message;
+    private T data;
 
-    public String getStatus() { return status; }
+    public boolean isSuccess() { return success; }
     public String getMessage() { return message; }
+    public T getData() { return data; }
 }

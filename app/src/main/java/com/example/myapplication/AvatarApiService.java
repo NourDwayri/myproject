@@ -1,6 +1,7 @@
 package com.example.myapplication;
 
 import java.util.List;
+
 import retrofit2.Call;
 import retrofit2.http.Body;
 import retrofit2.http.GET;
@@ -8,11 +9,10 @@ import retrofit2.http.POST;
 
 public interface AvatarApiService {
 
-    // GET all avatars
-    @GET("/avatars")
+    @GET("avatars")
     Call<List<AvatarDto>> getAllAvatars();
 
-    // POST a new avatar
-    @POST("/avatars")
-    Call<ApiResponse> addAvatar(@Body AvatarDto avatar);
+    @POST("avatars")
+    Call<ApiResponse<AvatarDto>> addAvatar(@Body AvatarDto avatar);
+
 }

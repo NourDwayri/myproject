@@ -47,6 +47,13 @@ public class AvatarCategoryActivity extends AppCompatActivity {
         fetchNetworkAvatars();
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        // Reload network avatars whenever returning to this activity
+        fetchNetworkAvatars();
+    }
+
     private void loadSQLiteAvatars() {
         SQLiteOpenHelper starbuzzDatabaseHelper = new StarbuzzDatabaseHelper(this);
         try {
