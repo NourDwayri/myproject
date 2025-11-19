@@ -1,25 +1,32 @@
 from fastapi import FastAPI
-from pydantic import BaseModel
-from typing import List
+from sqlmodel import SQLModel, Field, Session, create_engine, select
+from typing import Optional, List
 
-app = FastAPI()
-
-class Avatar(BaseModel):
+class Avatar(SQLModel, table=True):
+    id: Optional[int] = Field(default=None, primary_key=True)
     name: str
     description: str
     imageUrl: str
 
-avatars: List[Avatar] = [
-    Avatar(name="Michael", description="Beat me if you can", imageUrl="https://via.placeholder.com/150/FF0000/FFFFFF?text=Michael"),
-    Avatar(name="Lina", description="I'm a girl, therefore smart", imageUrl="https://via.placeholder.com/150/00FF00/FFFFFF?text=Lina"),
-    Avatar(name="Fadi", description="Being a nerd is cool", imageUrl="https://via.placeholder.com/150/0000FF/FFFFFF?text=Fadi")
-]
+sqlite_file_name = "avatars.db"
+sqlite_url = f"sqlite:///{sqlite_file_name}"
+engine = create_engine(sqlite_url, echo=True)
+
+app = FastAPI()
+
+@app.on_event("startup")
+def on_startup():
+    SQLModel.metadata.create_all(engine)
 
 @app.get("/avatars", response_model=List[Avatar])
 def get_avatars():
-    return avatars
+    with Session(engine) as session:
+        return session.exec(select(Avatar)).all()
 
 @app.post("/avatars", response_model=Avatar)
 def add_avatar(new_avatar: Avatar):
-    avatars.append(new_avatar)  # <- Add to the list
-    return new_avatar
+    with Session(engine) as session:
+        session.add(new_avatar)
+        session.commit()
+        session.refresh(new_avatar)
+        return new_avatar
