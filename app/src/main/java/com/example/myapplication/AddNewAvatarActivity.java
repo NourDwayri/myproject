@@ -39,22 +39,23 @@ public class AddNewAvatarActivity extends AppCompatActivity {
 
             // Call backend to add avatar
             RetrofitClient.getAvatarApiService().addAvatar(newAvatar)
-                    .enqueue(new Callback<AvatarDto>() { // Use AvatarDto instead of ApiResponse
+                    .enqueue(new Callback<ApiResponse<AvatarDto>>() { // MATCH the call type
                         @Override
-                        public void onResponse(Call<AvatarDto> call, Response<AvatarDto> response) {
-                            if (response.isSuccessful() && response.body() != null) {
+                        public void onResponse(Call<ApiResponse<AvatarDto>> call, Response<ApiResponse<AvatarDto>> response) {
+                            if (response.isSuccessful() && response.body() != null && response.body().isSuccess()) {
                                 Toast.makeText(AddNewAvatarActivity.this, "Avatar added!", Toast.LENGTH_SHORT).show();
-                                finish(); // Close activity after success
+                                finish(); // close activity after success
                             } else {
-                                Toast.makeText(AddNewAvatarActivity.this, "Failed: " + response.code(), Toast.LENGTH_SHORT).show();
+                                Toast.makeText(AddNewAvatarActivity.this, "Failed: " + (response.body() != null ? response.body().getMessage() : response.code()), Toast.LENGTH_SHORT).show();
                             }
                         }
 
                         @Override
-                        public void onFailure(Call<AvatarDto> call, Throwable t) {
+                        public void onFailure(Call<ApiResponse<AvatarDto>> call, Throwable t) {
                             Toast.makeText(AddNewAvatarActivity.this, "Error: " + t.getMessage(), Toast.LENGTH_SHORT).show();
                         }
                     });
+
         });
     }
 }
